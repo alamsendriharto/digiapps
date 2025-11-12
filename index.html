@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Aplikasi D!gichip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Dark Digital Theme with Neon Accents (Blue, Purple, Cyan) -->
+    <!-- Application Structure Plan: Diperbarui untuk memasukkan tab 'Misi' penuh. Struktur 'Mobile Dashboard' berpusat pada 5 Tujuan Strategis. Tab navigasi utama adalah Home, Misi (diperluas untuk mencakup Rewards/Loyalty), Lab Rasa (Engagement/Data), Shop (D2C), dan Profil. Kartu 'Scan & Uncover' tetap menjadi CTA utama di Home. Fitur Misi ditingkatkan untuk menampilkan Daftar Misi dan Bukti Share & Poin. -->
+    <!-- Visualization & Content Choices: 1. Info: Mission Center -> Goal: Loyalty/Engagement -> Viz: Daftar Tugas & Form Input (Bukti Share). Interaction: Toggle Misi Selesai/Belum, Button kirim link. Justification: Mendorong aktivitas dan validasi sosial media (Bukti Share & Poin). 2. Info: Scan & Uncover -> Goal: Engagement/Data -> Viz: Central Action Card -> Interaction: Click-to-show-modal/message. Justification: Mendorong interaksi utama (Tujuan 2 & 3). Library: HTML/CSS/JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .mobile-frame {
+            width: 100%;
+            max-width: 420px;
+            height: 90vh; 
+            max-height: 800px;
+            background-color: #0d1117;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .digital-shadow {
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);
+        }
+        .text-neon-blue {
+            color: #38bdf8;
+        }
+        .bg-neon-blue {
+            background-color: #38bdf8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-frame">
+        <!-- SIMULASI NOTIFIKASI / TOAST -->
+        <div id="toast-message" class="absolute top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-xl z-50 transition-opacity duration-300 opacity-0 hidden">
+            Aksi Berhasil!
+        </div>
+
+        <!-- HEADER - STATUS POIN (Tujuan 1: Loyalitas) -->
+        <header class="p-6 pt-8 flex justify-between items-center text-white sticky top-0 bg-[#0d1117] z-10">
+            <div>
+                <span class="text-xs text-gray-400 font-medium">Pengguna: Rizky A.</span>
+                <h1 class="text-2xl font-extrabold text-neon-blue">
+                    d<span class="text-purple-500">!</span>GICHIP
+                </h1>
+            </div>
+            <div class="text-right">
+                <p class="text-xs text-gray-400">Digi Poin Anda</p>
+                <div class="flex items-center space-x-2">
+                    <span class="text-3xl font-extrabold">1,250</span>
+                    <span class="text-sm font-semibold text-purple-400 border border-purple-400 px-2 py-0.5 rounded-full">Level Perak</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- KONTEN UTAMA YANG BERGANTI (TAB CONTENT) -->
+        <div id="content-container" class="flex-grow overflow-y-auto p-4 space-y-6">
+
+            <!-- HOME / DASHBOARD (Default View) -->
+            <div id="tab-home" class="tab-content">
+                
+                <!-- CARD UTAMA: SCAN & UNCOVER (Tujuan 2 & 3: Engagement & Data) -->
+                <div id="scan-card" class="bg-gray-800 p-6 rounded-2xl cursor-pointer digital-shadow active:scale-[.98] transition-transform duration-100">
+                    <h2 class="text-2xl font-bold text-neon-blue">SCAN & UNCOVER!</h2>
+                    <p class="text-gray-400 mt-1 mb-4">Masukkan kode rahasia kemasan Anda untuk poin dan konten eksklusif.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-white font-semibold">Buka Konten AR/Video</span>
+                        <span class="text-3xl text-purple-500">📷</span>
+                    </div>
+                </div>
+
+                <!-- QUICK ACTIONS (Tujuan 5: D2C Sales & Loyalty) -->
+                <div class="grid grid-cols-3 gap-3">
+                    <button data-action="pesanulang" class="action-btn bg-gray-800 p-4 rounded-xl text-center text-white active:scale-95 transition">
+                        <span class="block text-2xl mb-1">🛒</span>
+                        <span class="text-xs font-medium">Pesan Ulang</span>
+                    </button>
+                    <button data-action="tukarpoin" class="action-btn bg-gray-800 p-4 rounded-xl text-center text-white active:scale-95 transition">
+                        <span class="block text-2xl mb-1">🎁</span>
+                        <span class="text-xs font-medium">Tukar Poin</span>
+                    </button>
+                    <button data-action="squadorder" class="action-btn bg-gray-800 p-4 rounded-xl text-center text-white active:scale-95 transition">
+                        <span class="block text-2xl mb-1">🤝</span>
+                        <span class="text-xs font-medium">Squad Order</span>
+                    </button>
+                </div>
+                
+                <!-- DIGIFEED (NEW) (Tujuan 2 & 4: Engagement & Differentiation) -->
+                <div class="bg-gray-900 p-5 rounded-xl border border-gray-700">
+                    <h3 class="text-lg font-semibold text-white mb-4">DigiFeed: Aktivitas Terbaru</h3>
+                    <div id="digi-feed" class="space-y-4">
+                        <!-- Feed content will be injected here by JS -->
+                    </div>
+                    <button class="w-full mt-4 py-2 text-sm text-neon-blue font-semibold border border-neon-blue/50 rounded-lg active:scale-95 transition">
+                        Lihat Semua Feed
+                    </button>
+                </div>
+
+                <!-- PROGRESS MISI (Ringkasan Cepat) -->
+                <div class="bg-gray-900 p-5 rounded-xl border border-gray-700">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-lg font-semibold text-white">Misi Mingguan Aktif</h3>
+                        <span class="text-sm text-neon-blue">75% Selesai</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                        <div class="h-2.5 rounded-full bg-gradient-to-r from-neon-blue to-purple-500" style="width: 75%"></div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Sisa: 3 hari untuk menyelesaikan misi *DigiShare*.</p>
+                </div>
+
+                <!-- TRENDING FLAVORS (Tujuan 3: Data & Inovasi) -->
+                <div class="bg-gray-900 p-5 rounded-xl border border-gray-700">
+                    <h3 class="text-lg font-semibold text-white mb-4">Lab Rasa Digital: Tren</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-gray-300">
+                            <span>1. Choco Mint Madness</span>
+                            <span class="text-purple-400 font-bold">▲ 15%</span>
+                        </div>
+                        <div class="flex items-center justify-between text-gray-300">
+                            <span>2. Spicy Matcha Fusion</span>
+                            <span class="text-neon-blue font-bold">★ Baru</span>
+                        </div>
+                        <div class="flex items-center justify-between text-gray-300">
+                            <span>3. Classic Dark Chocolate</span>
+                            <span class="text-gray-500 font-bold">— Stabil</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- MISI & REWARDS CENTER (Tujuan 1 & 2: Loyalitas & Engagement) -->
+            <div id="tab-misi" class="tab-content hidden p-4 bg-gray-900 rounded-xl">
+                <h2 class="text-3xl font-bold text-purple-500 mb-4">Mission Center</h2>
+                <p class="text-gray-400 mb-6">Selesaikan misi untuk mendapatkan Digi Poin, Lencana, dan *reward* eksklusif!</p>
+                
+                <!-- Lencana Digital (Achievement) -->
+                <h3 class="text-xl font-semibold text-white mb-3">Lencana Digital Anda</h3>
+                <div class="flex space-x-4 mb-8 p-3 bg-gray-800 rounded-lg overflow-x-auto">
+                    <div class="text-center flex-shrink-0">
+                        <span class="text-4xl block">⭐</span>
+                        <span class="text-xs text-gray-400">Scan Master</span>
+                    </div>
+                    <div class="text-center flex-shrink-0">
+                        <span class="text-4xl block">🔬</span>
+                        <span class="text-xs text-gray-400">Mixer Junior</span>
+                    </div>
+                    <div class="text-center flex-shrink-0">
+                        <span class="text-4xl block">🔥</span>
+                        <span class="text-xs text-gray-400">Viral Hunter</span>
+                    </div>
+                    <div class="text-center flex-shrink-0 opacity-50">
+                        <span class="text-4xl block">👑</span>
+                        <span class="text-xs text-gray-600">Legend Mixer</span>
+                    </div>
+                </div>
+
+                <!-- Daftar Misi Aktif -->
+                <h3 class="text-xl font-semibold text-white mb-3">Daftar Misi Aktif</h3>
+                <div class="space-y-3">
+                    <!-- Misi 1: Weekly Scan -->
+                    <div class="bg-gray-800 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="text-white font-semibold">Misi Kerenyahan Mingguan</p>
+                            <p class="text-sm text-gray-400">Scan 3 kemasan minggu ini.</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-purple-400 font-bold">+150 Poin</span>
+                            <span class="text-xs text-neon-blue">2/3 Selesai</span>
+                        </div>
+                    </div>
+                    <!-- Misi 2: Flavor Battle Vote -->
+                    <div class="bg-gray-800 p-4 rounded-lg flex justify-between items-center">
+                        <div>
+                            <p class="text-white font-semibold">Berpartisipasi di Flavor Battles</p>
+                            <p class="text-sm text-gray-400">Vote 5 ide rasa baru.</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-purple-400 font-bold">+50 Poin</span>
+                            <span class="text-xs text-red-400">0/5 Selesai</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bukti Share & Poin -->
+                <div class="mt-8 bg-gray-800 p-5 rounded-xl border border-neon-blue/50">
+                    <h3 class="text-xl font-semibold text-neon-blue">Bukti Share & Poin (DigiShare)</h3>
+                    <p class="text-gray-400 text-sm mt-2 mb-4">Dapatkan poin ekstra dengan berbagi pengalaman d!Gichip di media sosial (Gunakan #d!GiSharePoin).</p>
+                    
+                    <input type="url" id="share-link-input" placeholder="Masukkan Link Postingan Anda (IG/TikTok)" class="w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-500 focus:ring-purple-500 focus:border-purple-500 border-gray-600 text-sm">
+                    <button id="send-share-proof" class="w-full mt-3 bg-purple-600 text-white p-3 rounded-lg font-bold active:scale-[.98] transition">
+                        Kirim Bukti Share
+                    </button>
+                    
+                    <p id="verification-status" class="text-xs text-yellow-400 mt-3 text-center">Status: Menunggu Verifikasi (±24 jam)</p>
+                </div>
+            </div>
+
+            <!-- LAB RASA DIGITAL (Tujuan 2 & 3: Engagement & Data) -->
+            <div id="tab-lab" class="tab-content hidden p-4 bg-gray-900 rounded-xl">
+                <h2 class="text-3xl font-bold text-neon-blue mb-4">Lab Rasa Digital</h2>
+                <p class="text-gray-400 mb-6">Jadilah *co-creator* kami! Desain rasa baru dan ikut *Flavor Battles*.</p>
+
+                <div class="space-y-4">
+                    <button class="w-full bg-purple-600 text-white p-4 rounded-xl font-bold text-lg digital-shadow active:scale-95 transition">
+                        MixMaster Studio (Desain Rasa)
+                    </button>
+                    <button class="w-full bg-orange-500 text-white p-4 rounded-xl font-bold text-lg digital-shadow active:scale-95 transition">
+                        Flavor Battles (Voting)
+                    </button>
+                </div>
+
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold text-white">CrunchFeed (Komunitas)</h3>
+                    <div class="mt-3 p-4 bg-gray-800 rounded-lg">
+                        <p class="text-gray-300">"Ide rasa Karamel Asin saya sudah 500 vote! Semangat!"</p>
+                        <span class="text-xs text-neon-blue">2 jam lalu</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SHOP (Tujuan 5: D2C Sales) -->
+            <div id="tab-shop" class="tab-content hidden p-4 bg-gray-900 rounded-xl">
+                <h2 class="text-3xl font-bold text-neon-blue mb-4">Shop & Pesan Ulang</h2>
+                <p class="text-gray-400 mb-6">Pesan langsung dari sumbernya! Dapatkan diskon Squad Order.</p>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-800 p-3 rounded-lg text-center">
+                        <span class="text-4xl block my-2">🍫</span>
+                        <p class="text-white font-semibold">Choco Delight Pouch</p>
+                        <p class="text-purple-400 font-bold">Rp 12.000</p>
+                        <button class="bg-neon-blue text-xs text-white px-3 py-1 mt-2 rounded-full active:scale-95 transition">Tambah</button>
+                    </div>
+                    <div class="bg-gray-800 p-3 rounded-lg text-center">
+                        <span class="text-4xl block my-2">🍓</span>
+                        <p class="text-white font-semibold">Strawberry Mini-Cup</p>
+                        <p class="text-purple-400 font-bold">Rp 5.000</p>
+                        <button class="bg-neon-blue text-xs text-white px-3 py-1 mt-2 rounded-full active:scale-95 transition">Tambah</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFIL -->
+            <div id="tab-profile" class="tab-content hidden p-4 bg-gray-900 rounded-xl">
+                <h2 class="text-3xl font-bold text-neon-blue mb-4">Profil Saya</h2>
+                <div class="space-y-4">
+                    <div class="p-4 bg-gray-800 rounded-lg">
+                        <h3 class="text-white font-semibold">Riwayat Transaksi</h3>
+                        <p class="text-gray-400 text-sm">Lihat semua pembelian dan penukaran poin Anda.</p>
+                    </div>
+                    <div class="p-4 bg-gray-800 rounded-lg">
+                        <h3 class="text-white font-semibold">Data Akumulasi Crunch Meter</h3>
+                        <p class="text-gray-400 text-sm">Transparansi kualitas: Data koleksi kerenyahan pribadi.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="h-20"></div> 
+        </div>
+
+        <!-- BOTTOM NAVIGATION BAR (Permanent) -->
+        <nav class="sticky bottom-0 bg-gray-900 border-t border-gray-700 p-2 flex justify-around text-white">
+            <button data-tab-name="home" class="nav-item flex flex-col items-center p-2 text-neon-blue active-tab">
+                <span class="text-xl mb-1">🏠</span>
+                <span class="text-xs">Home</span>
+            </button>
+            <button data-tab-name="misi" class="nav-item flex flex-col items-center p-2 text-gray-500">
+                <span class="text-xl mb-1">🏆</span>
+                <span class="text-xs">Misi</span>
+            </button>
+            <button data-tab-name="lab" class="nav-item flex flex-col items-center p-2 text-gray-500">
+                <span class="text-xl mb-1">🧪</span>
+                <span class="text-xs">Lab Rasa</span>
+            </button>
+            <button data-tab-name="shop" class="nav-item flex flex-col items-center p-2 text-gray-500">
+                <span class="text-xl mb-1">🛍️</span>
+                <span class="text-xs">Shop</span>
+            </button>
+            <button data-tab-name="profile" class="nav-item flex flex-col items-center p-2 text-gray-500">
+                <span class="text-xl mb-1">👤</span>
+                <span class="text-xs">Profil</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        const digiFeedData = [
+            { title: 'Level UP! Anda mencapai Level Emas!', type: 'Loyalty', time: '1m lalu', icon: '🏆', color: 'text-yellow-400' },
+            { title: 'Flavour Battles Minggu Ini: Matcha vs Mocca!', type: 'Lab Rasa', time: '3h lalu', icon: '🧪', color: 'text-neon-blue' },
+            { title: 'Promo Flash Sale: Beli 2 Pouch, Diskon 20%', type: 'Shop', time: '5h lalu', icon: '⚡', color: 'text-red-400' },
+            { title: 'Ide Rasa Karamel Asin memimpin voting di MixMaster Studio.', type: 'Community', time: '1d lalu', icon: '👍', color: 'text-purple-400' },
+        ];
+
+        function renderDigiFeed() {
+            const feedContainer = document.getElementById('digi-feed');
+            if (!feedContainer) return;
+
+            feedContainer.innerHTML = '';
+            digiFeedData.forEach(item => {
+                const feedItem = document.createElement('div');
+                feedItem.className = 'flex items-start p-3 bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-700 transition duration-150';
+                feedItem.innerHTML = `
+                    <span class="text-xl mr-3 ${item.color}">${item.icon}</span>
+                    <div class="flex-1">
+                        <p class="text-sm text-white font-medium">${item.title}</p>
+                        <div class="flex justify-between items-center mt-1">
+                            <span class="text-xs text-gray-500">${item.type}</span>
+                            <span class="text-xs text-gray-500">${item.time}</span>
+                        </div>
+                    </div>
+                `;
+                feedItem.addEventListener('click', () => showToast(`Membuka detail feed: ${item.title}`));
+                feedContainer.appendChild(feedItem);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navItems = document.querySelectorAll('.nav-item');
+            const toast = document.getElementById('toast-message');
+            const scanCard = document.getElementById('scan-card');
+            const sendShareProofButton = document.getElementById('send-share-proof');
+
+            renderDigiFeed();
+
+            function showToast(message, isError = false) {
+                toast.textContent = message;
+                toast.classList.remove('hidden', 'bg-green-500', 'bg-red-500');
+                toast.classList.add(isError ? 'bg-red-500' : 'bg-green-500');
+                setTimeout(() => {
+                    toast.classList.remove('opacity-0');
+                }, 10); 
+                setTimeout(() => {
+                    toast.classList.add('opacity-0');
+                    setTimeout(() => {
+                        toast.classList.add('hidden');
+                    }, 300); 
+                }, 2000); 
+            }
+
+            function switchTab(targetTabName) {
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                const targetElement = document.getElementById(`tab-${targetTabName}`);
+                if (targetElement) {
+                    targetElement.classList.remove('hidden');
+                }
+
+                navItems.forEach(item => {
+                    item.classList.remove('text-neon-blue', 'active-tab');
+                    item.classList.add('text-gray-500');
+                });
+                const activeItem = document.querySelector(`.nav-item[data-tab-name="${targetTabName}"]`);
+                if (activeItem) {
+                    activeItem.classList.add('text-neon-blue', 'active-tab');
+                    activeItem.classList.remove('text-gray-500');
+                }
+
+                document.getElementById('content-container').scrollTop = 0;
+            }
+
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetTabName = item.getAttribute('data-tab-name');
+                    switchTab(targetTabName);
+                });
+            });
+
+            scanCard.addEventListener('click', () => {
+                showToast("Memuat Pemindai Kode QR...");
+            });
+
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const actionName = e.currentTarget.querySelector('span:last-child').textContent;
+                    showToast(`${actionName} diakses!`);
+                });
+            });
+            
+            if (sendShareProofButton) {
+                sendShareProofButton.addEventListener('click', () => {
+                    const input = document.getElementById('share-link-input');
+                    const status = document.getElementById('verification-status');
+                    if (input.value.trim() === '') {
+                        showToast("Link tidak boleh kosong!", true);
+                        return;
+                    }
+                    showToast("Bukti Share terkirim! Menunggu verifikasi.");
+                    status.textContent = 'Status: Bukti Terkirim (Menunggu Verifikasi)';
+                    status.classList.remove('text-yellow-400', 'text-green-400');
+                    status.classList.add('text-yellow-400');
+                    input.value = '';
+                });
+            }
+
+            switchTab('home');
+        });
+    </script>
+
+</body>
+</html>
