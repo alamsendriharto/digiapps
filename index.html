@@ -1,24 +1,768 @@
-Baik, Alam\! Saya mengerti. Untuk menjaga fokus dan menghindari *overwhelm*, kita akan mengurangi pilihan rasa menjadi 3 varian utama, yang mencakup kombinasi yang menarik dan unik.
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>d!GICHIP - Smart Snack App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-Berikut adalah *prompt* yang sudah diperbarui dengan **3 pilihan rasa kunci** yang lebih ringkas, siap Anda gunakan di Gemini Canvas:
+        /* Latar belakang aplikasi bagian dalam (CERIA/TERANG, Bergerak) */
+        .animated-content-bg {
+            background: linear-gradient(-45deg, #c4b5fd, #7dd3fc, #f0f4f8, #c4b5fd); /* Soft purples, blues, light gray */
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+        }
 
------
+        body {
+            font-family: 'Inter', sans-serif;
+            /* GRADIENT GELAP (Ungu dan Biru, Bergerak) untuk latar belakang halaman utama */
+            background: linear-gradient(-45deg, #4c1973, #1e3a8a, #1f2937, #4c1973); /* Deep indigo, deep violet, dark gray */
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Hide body scrollbar */
+        }
+        .mobile-frame {
+            width: 100%;
+            max-width: 420px;
+            height: 90vh; 
+            max-height: 800px;
+            background-color: white; 
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: hidden; /* Hide content overflow for scrolling */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .text-primary-blue {
+            color: #0ea5e9; /* Sky-500 */
+        }
+        .bg-primary-blue {
+            background-color: #0ea5e9; 
+        }
+        .card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
 
-## PROMPT GEMINI CANVAS: VISUALISASI MIXMASTER STUDIO (3 Varian Fokus)
+        /* Spesifik untuk Splash Screen */
+        .splash-screen {
+            background: linear-gradient(-45deg, #4c1973, #1e3a8a, #0ea5e9, #c4b5fd, #4c1973); /* More vibrant for splash */
+            background-size: 400% 400%;
+            animation: gradientMove 20s ease infinite;
+        }
+        .digital-circuit-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236b21a8' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0 0H0V0h36v34zM0 60h50V10H0v50zm60 0h-8V40h8v20zM24 0v10H0V0h24z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); /* Simple circuit pattern */
+            opacity: 0.1;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
 
-```
-Buatlah visualisasi interaktif dan dinamis untuk fitur "LAB RASA DIGITAL: MIXMASTER STUDIO" dari aplikasi startup foodtech "d!GICHIP".
+    <div class="mobile-frame">
+        <!-- SPLASH SCREEN -->
+        <div id="splash-screen" class="absolute inset-0 flex flex-col items-center justify-center text-white splash-screen z-50 transition-opacity duration-500">
+            <div class="digital-circuit-effect"></div>
+            <div class="relative z-10 text-center">
+                <h1 class="text-6xl font-extrabold mb-2 leading-tight">
+                    d<span class="text-pink-400">!</span>GICHIP
+                </h1>
+                <p class="text-lg font-medium tracking-wide">"di-icip, di-gigit, d!Gichip - Selamatkan idemu!"</p>
+                <button id="start-app-button" class="mt-12 px-8 py-3 bg-pink-500 hover:bg-pink-600 active:scale-95 transition-all duration-200 text-white font-bold rounded-full shadow-lg text-lg">
+                    Mulai Aplikasi
+                </button>
+            </div>
+        </div>
 
-**Tujuan Visual:** Tunjukkan sistem kustomisasi dengan 3 varian rasa unik yang menjadi fokus utama.
+        <!-- SIMULASI NOTIFIKASI / TOAST -->
+        <div id="toast-message" class="absolute top-4 left-1/2 -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-xl z-50 transition-opacity duration-300 opacity-0 hidden">
+            Aksi Berhasil!
+        </div>
+        
+        <!-- MODAL FOR INPUT SCAN -->
+        <div id="scan-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white p-6 rounded-2xl w-full max-w-sm shadow-2xl">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Masukkan Kode Rahasia</h3>
+                <input type="text" id="scan-code-input" placeholder="Contoh: CHIP2025RIZKY" class="w-full p-3 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 focus:ring-primary-blue focus:border-primary-blue mb-4">
+                <div class="flex justify-end space-x-3">
+                    <button id="close-scan-modal" class="px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-100 transition">Batal</button>
+                    <button id="submit-scan-code" class="px-4 py-2 bg-primary-blue text-white rounded-lg font-semibold hover:bg-sky-600 transition">Kirim Kode</button>
+                </div>
+            </div>
+        </div>
 
-**Estetika:** Gunakan gaya digital, bersih (base putih), dan diperkaya dengan warna cerah d!GICHIP (biru, pink, kuning). Sertakan elemen sirkuit digital atau ikon ilmiah/kimia yang halus.
 
-**Detail Konten (3 Varian Rasa):**
-Tampilkan 3 kartu (atau elemen visual) yang merepresentasikan setiap kombinasi di bawah, dibagi berdasarkan lapisan:
+        <!-- HEADER - STATUS POIN -->
+        <header class="p-6 pt-8 flex justify-between items-center text-gray-900 sticky top-0 animated-content-bg z-10 border-b border-gray-200">
+            <div>
+                <span class="text-xs text-gray-600 font-medium">Pengguna: Rizky A.</span>
+                <h1 class="text-2xl font-extrabold text-primary-blue">
+                    d<span class="text-purple-600">!</span>GICHIP
+                </h1>
+            </div>
+            <div class="text-right">
+                <p class="text-xs text-gray-600">Digi Poin Anda</p>
+                <div class="flex items-center space-x-2">
+                    <span id="user-points" class="text-3xl font-extrabold text-gray-900">1,250</span>
+                    <span id="user-level" class="text-sm font-semibold text-purple-600 border border-purple-300 bg-purple-100 px-2 py-0.5 rounded-full">Level Perak</span>
+                </div>
+            </div>
+        </header>
 
-1.  **Strawberry Tiramisu:** Base Coklat Putih/Kopi + Topping Strawberry Kering
-2.  **Velvet Coklat Milk:** Base Coklat Susu Klasik + Topping Serpihan Milk Powder
-3.  **Spicy Gula Aren:** Base Coklat Gelap + Rasa Gula Aren + Topping Chili Flakes & Kacang Mede
+        <!-- KONTEN UTAMA YANG BERGANTI -->
+        <div id="content-container" class="flex-grow overflow-y-auto p-4 space-y-6 animated-content-bg">
 
-**Ajakan (CTA):** Sertakan teks "DESIGN YOUR d!GICHIP: The Next Iconic Flavor Awaits!".
-```
+            <!-- TAB "FEED" SCREEN (UPDATED: Now the main Feed/Home) -->
+            <div id="tab-feed" class="tab-content">
+                <!-- CARD UTAMA: SCAN & UNCOVER (Pindah ke sini) -->
+                <div id="scan-card" class="bg-gradient-to-br from-sky-400 to-indigo-500 p-6 rounded-2xl cursor-pointer card-shadow active:scale-[.98] transition-transform duration-100 shadow-lg mb-6">
+                    <h2 class="text-2xl font-bold text-white">SCAN & UNCOVER!</h2>
+                    <p class="text-sky-100 mt-1 mb-4">Masukkan kode rahasia kemasan Anda untuk poin dan konten eksklusif.</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-white font-semibold">Buka Konten AR/Video</span>
+                        <span class="text-3xl text-white">📷</span>
+                    </div>
+                </div>
+
+                <div class="bg-white/80 backdrop-blur-sm p-5 rounded-xl border border-gray-200 card-shadow mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">DigiFeed: Aktivitas & Ajakan Rasa!</h3>
+                    <!-- Loading state for feed -->
+                    <div id="loading-feed" class="text-center text-sm text-gray-500 p-8">Memuat feed dari server...</div>
+                    <div id="digi-feed" class="space-y-6">
+                        <!-- Feed items rendered by JS / Firestore -->
+                        
+                        <!-- MOCK POSTINGAN AFILIATOR (Gaya mirip TikTok/Instagram Story/Reel) -->
+                        <div class="feed-post p-4 bg-white rounded-xl shadow-md border border-pink-100">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-pink-200 rounded-full border-2 border-pink-500 flex items-center justify-center font-bold text-pink-700">R</div>
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-900">@RasaGila_ID <span class="text-pink-500 text-xs">✨Afiliator✨</span></p>
+                                        <p class="text-xs text-gray-500">1 jam yang lalu • Lab Rasa</p>
+                                    </div>
+                                </div>
+                                <span class="text-xl">❤️ 1.2K</span>
+                            </div>
+                            <p class="text-gray-700 mb-3">
+                                Kalian wajib banget coba **Spicy Gula Aren**! Pedesnya nagih, manisnya dapet. Kerenyahannya pas buat ASMR. Yuk, bantu voting biar rasa ini jadi permanen! #SpicyGulaAren #DigiChipReview
+                            </p>
+                            <img src="https://placehold.co/400x250/f9a8d4/3b0764?text=Spicy+Gula+Aren+Review" alt="Spicy Gula Aren Review" class="rounded-lg w-full mb-3" onerror="this.onerror=null;this.src='https://placehold.co/400x250/f9a8d4/3b0764?text=Spicy+Gula+Aren+Review';">
+                            <button class="w-full bg-purple-600 text-white p-2 rounded-lg font-bold active:scale-[.98] transition hover:bg-purple-700" onclick="switchTab('lab')">
+                                🧪 Coba & Vote Varian Ini!
+                            </button>
+                        </div>
+                         <!-- END MOCK POSTINGAN -->
+
+                    </div>
+                    <button class="w-full mt-4 py-2 text-sm text-primary-blue font-semibold border border-primary-blue/50 rounded-lg active:scale-95 transition hover:bg-sky-50/50">
+                        Muat Lebih Banyak Postingan
+                    </button>
+                </div>
+
+                <!-- Pamer & Poin / Misi & Rewards -->
+                <div class="bg-white/80 backdrop-blur-sm p-5 rounded-xl border border-gray-200 card-shadow">
+                    <h3 class="text-xl font-semibold text-purple-600 mb-4">Misi & Pamer Poin!</h3>
+                    <p class="text-gray-600 text-sm mb-4">Selesaikan misi dan bagikan kreasi Anda untuk poin ekstra!</p>
+                    
+                    <button class="w-full bg-purple-600 text-white p-3 rounded-lg font-bold active:scale-[.98] transition hover:bg-purple-700 mb-3" onclick="showToast('Membuka Misi Tracker...')">
+                        Lihat Misi Aktif
+                    </button>
+                    
+                    <input type="url" id="share-link-input" placeholder="Link Postingan Anda (IG/TikTok)" class="w-full p-3 rounded-lg bg-white text-gray-900 placeholder-gray-400 border border-gray-300 focus:ring-purple-500 focus:border-purple-500 text-sm">
+                    <button id="send-share-proof" class="w-full mt-3 bg-primary-blue text-white p-3 rounded-lg font-bold active:scale-[.98] transition hover:bg-sky-600">
+                        Kirim Bukti Share
+                    </button>
+                    <p id="verification-status" class="text-xs text-amber-500 mt-3 text-center">Status: Belum ada kiriman</p>
+                </div>
+
+                <!-- Tombol Upload Post -->
+                <button class="fixed bottom-24 right-6 bg-pink-500 text-white p-4 rounded-full shadow-lg z-20 active:scale-90 transition hover:bg-pink-600" onclick="showToast('Membuka Editor Postingan Baru...')">
+                    <span class="text-2xl">+</span>
+                </button>
+            </div>
+
+            <!-- TAB "HOME" LAMA (DIHAPUS/DIGANTI) -->
+            <div id="tab-home" class="tab-content hidden">
+                <!-- Konten lama dari Home dipindahkan ke tab-feed -->
+                <!-- Menambahkan ini agar Javascript switchTab tetap berfungsi -->
+                <p class="text-center text-gray-500 p-8">Konten Home telah dipindahkan ke Tab Feed dan Shop.</p>
+            </div>
+
+            <!-- TAB "LAB RASA" SCREEN -->
+            <div id="tab-lab" class="tab-content hidden">
+                <div class="bg-white/80 backdrop-blur-sm p-4 rounded-xl card-shadow">
+                    <h2 class="text-3xl font-bold text-primary-blue mb-4">Lab Rasa Digital</h2>
+                    <p class="text-gray-600 mb-6">Jadilah *co-creator* kami! Desain rasa baru dan ikut *Flavor Battles*.</p>
+
+                    <!-- NEW MIXMASTER STUDIO UI -->
+                    <div id="mixmaster-studio" class="p-5 bg-white rounded-2xl shadow-xl border border-gray-100">
+                        <h3 class="text-2xl font-extrabold text-gray-900 mb-1">DESIGN YOUR d!GICHIP:</h3>
+                        <p class="text-sm font-semibold text-purple-600 mb-5">The Next Iconic Flavor Awaits!</p>
+
+                        <div class="space-y-4">
+                            <!-- 1. Strawberry Tiramisu -->
+                            <div class="flavor-card p-4 rounded-xl border-2 border-pink-300 bg-pink-50/50 cursor-pointer hover:bg-pink-100 transition-all active:scale-[.99] shadow-md">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-3xl">☕🍓</span>
+                                    <h4 class="text-lg font-bold text-gray-800">Strawberry Tiramisu</h4>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-2 ml-10">
+                                    <span class="font-semibold text-primary-blue">Base:</span> Coklat Putih/Kopi (Digital Fusion)<br>
+                                    <span class="font-semibold text-pink-600">Topping:</span> Strawberry Kering Super Crunchy
+                                </p>
+                                <button class="customize-btn mt-3 w-full bg-pink-500 text-white py-2 rounded-lg text-sm font-bold hover:bg-pink-600" data-flavor="Strawberry Tiramisu">Pilih Varian & Customize</button>
+                            </div>
+
+                            <!-- 2. Velvet Coklat Milk -->
+                            <div class="flavor-card p-4 rounded-xl border-2 border-sky-300 bg-sky-50/50 cursor-pointer hover:bg-sky-100 transition-all active:scale-[.99] shadow-md">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-3xl">🥛🍫</span>
+                                    <h4 class="text-lg font-bold text-gray-800">Velvet Coklat Milk</h4>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-2 ml-10">
+                                    <span class="font-semibold text-primary-blue">Base:</span> Coklat Susu Klasik (Velvet Texture)<br>
+                                    <span class="font-semibold text-pink-600">Topping:</span> Serpihan Milk Powder Halus
+                                </p>
+                                <button class="customize-btn mt-3 w-full bg-primary-blue text-white py-2 rounded-lg text-sm font-bold hover:bg-sky-600" data-flavor="Velvet Coklat Milk">Pilih Varian & Customize</button>
+                            </div>
+                            
+                            <!-- 3. Spicy Gula Aren -->
+                            <div class="flavor-card p-4 rounded-xl border-2 border-amber-300 bg-amber-50/50 cursor-pointer hover:bg-amber-100 transition-all active:scale-[.99] shadow-md">
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-3xl">🌶️🌴</span>
+                                    <h4 class="text-lg font-bold text-gray-800">Spicy Gula Aren</h4>
+                                </div>
+                                <p class="text-xs text-gray-600 mt-2 ml-10">
+                                    <span class="font-semibold text-primary-blue">Base:</span> Coklat Gelap + Rasa Gula Aren<br>
+                                    <span class="font-semibold text-pink-600">Topping:</span> Chili Flakes & Kacang Mede (Kick!)
+                                </p>
+                                <button class="customize-btn mt-3 w-full bg-amber-500 text-white py-2 rounded-lg text-sm font-bold hover:bg-amber-600" data-flavor="Spicy Gula Aren">Pilih Varian & Customize</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END NEW MIXMASTER STUDIO UI -->
+                    
+                    <div class="mt-6">
+                        <button class="w-full bg-orange-500 text-white p-4 rounded-xl font-bold text-lg card-shadow active:scale-95 transition hover:bg-orange-600 flex items-center justify-center space-x-2" onclick="showToast('Memuat Flavor Battles...')">
+                            <span class="text-2xl">⚔️</span> <span>Flavor Battles (Voting)</span>
+                        </button>
+                    </div>
+
+                    <!-- Afiliasi Konten -->
+                    <div class="mt-8 p-5 bg-purple-100/70 rounded-xl border border-purple-300 card-shadow">
+                        <h3 class="text-xl font-semibold text-purple-600 mb-3">Program Afiliasi Konten</h3>
+                        <p class="text-gray-700 text-sm">Ajak teman, buat konten menarik, dan dapatkan komisi! Bergabung sekarang.</p>
+                        <button class="w-full mt-4 bg-purple-500 text-white p-3 rounded-lg font-bold active:scale-95 transition hover:bg-purple-600" onclick="showToast('Membuka Pendaftaran Afiliasi...')">
+                            Daftar Afiliasi
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB "SHOP" SCREEN (UPDATED) -->
+            <div id="tab-shop" class="tab-content hidden">
+                 <div class="bg-white/80 backdrop-blur-sm p-4 rounded-xl card-shadow">
+                    <h2 class="text-3xl font-bold text-primary-blue mb-4">Shop & Pesan Ulang</h2>
+                    <p class="text-gray-600 mb-6">Pesan langsung dari sumbernya! Dapatkan diskon Squad Order.</p>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="product-card bg-white/70 p-3 rounded-lg text-center border border-gray-200 card-shadow">
+                            <span class="text-4xl block my-2">☕</span>
+                            <p class="text-gray-900 font-semibold">Banana Crunch Tiramisu</p>
+                            <p class="text-purple-600 font-bold">Rp 25.000</p>
+                            <button class="add-to-cart bg-primary-blue text-xs text-white px-3 py-1 mt-2 rounded-full active:scale-95 transition hover:bg-sky-600" data-item="Banana Crunch Tiramisu">Tambah</button>
+                        </div>
+                        <div class="product-card bg-white/70 p-3 rounded-lg text-center border border-gray-200 card-shadow">
+                            <span class="text-4xl block my-2">🍵</span>
+                            <p class="text-gray-900 font-semibold">Banana Crunch Tea</p>
+                            <p class="text-purple-600 font-bold">Rp 25.000</p>
+                            <button class="add-to-cart bg-primary-blue text-xs text-white px-3 py-1 mt-2 rounded-full active:scale-95 transition hover:bg-sky-600" data-item="Banana Crunch Tea">Tambah</button>
+                        </div>
+                        <div class="product-card bg-white/70 p-3 rounded-lg text-center border border-gray-200 card-shadow">
+                            <span class="text-4xl block my-2">🍓</span>
+                            <p class="text-gray-900 font-semibold">Banana Crunch Strawberry</p>
+                            <p class="text-purple-600 font-bold">Rp 25.000</p>
+                            <button class="add-to-cart bg-primary-blue text-xs text-white px-3 py-1 mt-2 rounded-full active:scale-95 transition hover:bg-sky-600" data-item="Banana Crunch Strawberry">Tambah</button>
+                        </div>
+                         <!-- Product placeholder agar 4 item -->
+                        <div class="product-card bg-white/70 p-3 rounded-lg text-center border border-gray-200 card-shadow">
+                            <span class="text-4xl block my-2">🍫</span>
+                            <p class="text-gray-900 font-semibold">Coklat Klasik Pouch</p>
+                            <p class="text-purple-600 font-bold">Rp 12.000</p>
+                            <button class="add-to-cart bg-primary-blue text-xs text-white px-3 py-1 mt-2 rounded-full active:scale-95 transition hover:bg-sky-600" data-item="Coklat Klasik Pouch">Tambah</button>
+                        </div>
+                    </div>
+
+                    <button class="w-full bg-purple-600 text-white p-4 rounded-xl font-bold text-lg card-shadow active:scale-95 transition hover:bg-purple-700 mt-6" onclick="showToast('Memulai Squad Order...')">
+                        Squad Order (Diskon Grup)
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB "PROFIL" SCREEN -->
+            <div id="tab-profile" class="tab-content hidden">
+                <div class="bg-white/80 backdrop-blur-sm p-4 rounded-xl card-shadow">
+                    <h2 class="text-3xl font-bold text-primary-blue mb-4">Profil Saya</h2>
+                    
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center text-3xl text-gray-600">👤</div>
+                        <div>
+                            <p class="text-xl font-semibold text-gray-900">Rizky Ardiansyah</p>
+                            <p class="text-sm text-gray-600">rizky.a@email.com</p>
+                            <p class="text-xs text-gray-500 break-all">ID: <span id="display-user-id">Memuat...</span></p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="p-4 bg-white/70 rounded-lg border border-gray-200 card-shadow">
+                            <h3 class="text-gray-900 font-semibold">Digi Poin & Lencana</h3>
+                            <p class="text-gray-600 text-sm">Poin: <span id="profile-points">1,250</span> | Level: <span id="profile-level">Perak</span> | Lencana: Scan Master, Mixer Junior</p>
+                            <button class="text-primary-blue text-xs mt-2 hover:underline" onclick="showToast('Membuka Lencana...')">Lihat Detail</button>
+                        </div>
+                        <div class="p-4 bg-white/70 rounded-lg border border-gray-200 card-shadow">
+                            <h3 class="text-gray-900 font-semibold">Riwayat Transaksi</h3>
+                            <p class="text-gray-600 text-sm">Lihat semua pembelian dan penukaran poin Anda.</p>
+                            <button class="text-primary-blue text-xs mt-2 hover:underline" onclick="showToast('Membuka Riwayat...')">Lihat Riwayat</button>
+                        </div>
+                        <div class="p-4 bg-white/70 rounded-lg border border-gray-200 card-shadow">
+                            <h3 class="text-gray-900 font-semibold">Data Akumulasi Crunch Meter</h3>
+                            <p class="text-gray-600 text-sm">Kerenyahan favorit Anda: Sangat Renyah (85%).</p>
+                            <button class="text-primary-blue text-xs mt-2 hover:underline" onclick="showToast('Membuka Laporan Kualitas...')">Lihat Laporan Kualitas</button>
+                        </div>
+                        <div class="p-4 bg-white/70 rounded-lg border border-gray-200 card-shadow">
+                            <h3 class="text-gray-900 font-semibold">Pengaturan Akun</h3>
+                            <p class="text-gray-600 text-sm">Atur preferensi, notifikasi, dan keamanan.</p>
+                            <button class="text-primary-blue text-xs mt-2 hover:underline" onclick="showToast('Membuka Pengaturan...')">Kelola Pengaturan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="h-20"></div> 
+        </div>
+
+        <!-- BOTTOM NAVIGATION BAR (Permanent) -->
+        <nav class="sticky bottom-0 animated-content-bg border-t border-gray-200 p-2 flex justify-around text-gray-900 shadow-xl">
+            <!-- Pindahkan Home (🏠) ke posisi Feed (📸) di navigasi -->
+            <button data-tab-name="feed" class="nav-item flex flex-col items-center p-2 text-primary-blue active-tab">
+                <span class="text-xl mb-1">📸</span>
+                <span class="text-xs">Feed</span>
+            </button>
+            <button data-tab-name="home" class="nav-item flex flex-col items-center p-2 text-gray-700">
+                 <!-- TUKAR ICON (🏠 diganti dengan icon lain/dihapus jika tidak perlu) -->
+                <span class="text-xl mb-1">🏠</span> 
+                <span class="text-xs">Home (Lama)</span>
+            </button>
+            <button data-tab-name="lab" class="nav-item flex flex-col items-center p-2 text-gray-700">
+                <span class="text-xl mb-1">🧪</span>
+                <span class="text-xs">Lab Rasa</span>
+            </button>
+            <button data-tab-name="shop" class="nav-item flex flex-col items-center p-2 text-gray-700">
+                <span class="text-xl mb-1">🛍️</span>
+                <span class="text-xs">Shop</span>
+            </button>
+            <button data-tab-name="profile" class="nav-item flex flex-col items-center p-2 text-gray-700">
+                <span class="text-xl mb-1">👤</span>
+                <span class="text-xs">Profil</span>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        // Memindahkan fungsi showToast ke global scope agar dapat diakses oleh inline onclick handlers
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast-message');
+            toast.textContent = message;
+            toast.classList.remove('hidden', 'bg-green-500', 'bg-red-500', 'opacity-0');
+            toast.classList.add(isError ? 'bg-red-500' : 'bg-green-500');
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 300); 
+            }, 2000); 
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query, addDoc, serverTimestamp, getDocs, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // --- Firebase Setup ---
+        let db;
+        let auth;
+        let userId = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        
+        if (typeof __firebase_config !== 'undefined') {
+            const firebaseConfig = JSON.parse(__firebase_config);
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+            setLogLevel('debug'); // Enable Firestore logging
+        } else {
+            console.error("Firebase config is not available.");
+        }
+
+        /**
+         * Converts base64 encoded string to ArrayBuffer. Used for audio data processing.
+         * @param {string} base64 - Base64 string of the audio data.
+         * @returns {ArrayBuffer}
+         */
+        const base64ToArrayBuffer = (base64) => {
+            const binaryString = atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        };
+
+        /**
+         * Converts signed PCM 16-bit data into a WAV Blob.
+         * @param {Int16Array} pcm16 - Raw PCM 16-bit audio data.
+         * @param {number} sampleRate - The sample rate (e.g., 24000).
+         * @returns {Blob} - A WAV audio blob.
+         */
+        const pcmToWav = (pcm16, sampleRate) => {
+            const numChannels = 1;
+            const bytesPerSample = 2;
+            const blockAlign = numChannels * bytesPerSample;
+            const byteRate = sampleRate * blockAlign;
+            
+            const buffer = new ArrayBuffer(44 + pcm16.byteLength);
+            const view = new DataView(buffer);
+
+            // Write WAV file header
+            let offset = 0;
+            const writeString = (s) => {
+                for (let i = 0; i < s.length; i++) view.setUint8(offset++, s.charCodeAt(i));
+            };
+            const writeUint32 = (v) => { view.setUint32(offset, v, true); offset += 4; };
+            const writeUint16 = (v) => { view.setUint16(offset, v, true); offset += 2; };
+
+            writeString('RIFF'); // Chunk ID
+            writeUint32(36 + pcm16.byteLength); // Chunk Size
+            writeString('WAVE'); // Format
+            writeString('fmt '); // Subchunk 1 ID
+            writeUint32(16); // Subchunk 1 Size (16 for PCM)
+            writeUint16(1); // Audio Format (1 for PCM)
+            writeUint16(numChannels); // Number of Channels
+            writeUint32(sampleRate); // Sample Rate
+            writeUint32(byteRate); // Byte Rate
+            writeUint16(blockAlign); // Block Align
+            writeUint16(16); // Bits Per Sample (16-bit)
+            writeString('data'); // Subchunk 2 ID
+            writeUint32(pcm16.byteLength); // Subchunk 2 Size
+
+            // Write PCM data
+            for (let i = 0; i < pcm16.length; i++) {
+                view.setInt16(offset, pcm16[i], true);
+                offset += 2;
+            }
+
+            return new Blob([buffer], { type: 'audio/wav' });
+        };
+
+
+        async function setupAuthAndDatabase() {
+            if (!auth) return;
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    document.getElementById('display-user-id').textContent = userId;
+                    
+                    // --- Firebase is Ready. Start Data Listeners ---
+                    startDigiFeedListener();
+                    
+                    // Mock: Set initial user data if it doesn't exist
+                    const userRef = doc(db, 'artifacts', appId, 'users', userId, 'profile', 'data');
+                    try {
+                        await setDoc(userRef, { 
+                            lastLogin: serverTimestamp(),
+                            points: 1250,
+                            level: 'Perak'
+                        }, { merge: true });
+                        console.log("User profile initialized/updated.");
+
+                        // Mock: Add initial feed items if none exist (for demonstration)
+                        const feedCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'feed_items');
+                        const snapshot = await getDocs(feedCollectionRef);
+                        if (snapshot.empty) {
+                             const mockFeedItems = [
+                                 { title: 'Selamat datang di d!GICHIP!', type: 'System', time: serverTimestamp(), icon: '👋', color: 'text-green-500' },
+                                 { title: '100 Poin bonus pendaftaran telah ditambahkan!', type: 'Loyalty', time: serverTimestamp(), icon: '➕', color: 'text-amber-500' },
+                                 { title: 'Tantangan Flavor Battle pertama menanti!', type: 'Lab Rasa', time: serverTimestamp(), icon: '🧪', color: 'text-primary-blue' },
+                             ];
+                             for (const item of mockFeedItems) {
+                                 await addDoc(feedCollectionRef, item);
+                             }
+                        }
+
+                    } catch (e) {
+                        console.error("Error setting up user profile or mock data: ", e);
+                    }
+                } else {
+                    console.log("Not signed in.");
+                    // Fallback for non-multiplayer features if needed, but we signed in anonymously/custom token.
+                }
+            });
+
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Error during initial authentication:", error);
+                // Fallback to anonymous sign-in if custom token fails
+                try {
+                    await signInAnonymously(auth);
+                } catch (anonError) {
+                    console.error("Error during anonymous sign-in:", anonError);
+                }
+            }
+        }
+
+        // --- Data Listeners ---
+        function startDigiFeedListener() {
+            if (!db || !userId) return;
+
+            const feedContainer = document.getElementById('digi-feed');
+            const loadingIndicator = document.getElementById('loading-feed');
+            
+            // Reference to the user's private feed items, sorted by time descending
+            const feedCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'feed_items');
+            
+            // Listen for real-time updates
+            onSnapshot(feedCollectionRef, (snapshot) => {
+                loadingIndicator.classList.add('hidden');
+                
+                // Hapus hanya feed yang berasal dari database, biarkan mock postingan afiliator
+                const existingPosts = feedContainer.querySelectorAll('.feed-post');
+                let feedHtml = '';
+                
+                let feedItems = [];
+                snapshot.forEach(doc => {
+                    feedItems.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Sort the items in memory by time (newest first), as we avoided orderBy in query
+                feedItems.sort((a, b) => {
+                    const timeA = a.time ? (a.time.toDate ? a.time.toDate().getTime() : a.time.getTime()) : 0;
+                    const timeB = b.time ? (b.time.toDate ? b.time.toDate().getTime() : b.time.getTime()) : 0;
+                    return timeB - timeA;
+                });
+
+                feedItems.forEach(item => {
+                    const timeString = item.time ? item.time.toDate().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : 'Baru saja';
+                    // Render database-backed feed items as a different style if needed, 
+                    // or just prepend them to existing content. For simplicity, we prepend to the container innerHTML.
+                    feedHtml += `
+                        <div class="flex items-start p-3 bg-white/70 rounded-lg cursor-pointer hover:bg-white/90 transition duration-150 border border-gray-200">
+                            <span class="text-xl mr-3 ${item.color || 'text-gray-900'}">${item.icon || '📝'}</span>
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-900 font-medium">${item.title}</p>
+                                <div class="flex justify-between items-center mt-1">
+                                    <span class="text-xs text-gray-600">${item.type || 'Umum'}</span>
+                                    <span class="text-xs text-gray-600">${timeString}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                // Find where to inject the DB feed data relative to the mock post (if needed)
+                // For simplicity, we assume the mock post is the *first* child of #digi-feed on initial load.
+                // If the container is empty (no mock posts), just set innerHTML.
+                // If it contains children (the mock post is there), we insert after the mock.
+                // NOTE: Since the mock post is already in the HTML and we want DB feed to be *above* it
+                // (usually newest feed is on top), we clear everything and re-render.
+                
+                feedContainer.innerHTML = feedHtml + feedContainer.innerHTML;
+
+                if (feedItems.length === 0 && existingPosts.length === 0) {
+                     feedContainer.innerHTML = '<p class="text-center text-gray-500 italic p-4">Belum ada aktivitas di DigiFeed.</p>';
+                }
+
+
+            }, (error) => {
+                console.error("Error listening to DigiFeed: ", error);
+                loadingIndicator.textContent = 'Gagal memuat feed.';
+            });
+        }
+        
+        // --- Core Application Logic ---
+        const scanModal = document.getElementById('scan-modal');
+
+        function switchTab(targetTabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            const targetElement = document.getElementById(`tab-${targetTabName}`);
+            if (targetElement) {
+                targetElement.classList.remove('hidden');
+            }
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('text-primary-blue', 'active-tab');
+                item.classList.add('text-gray-700'); 
+            });
+            const activeItem = document.querySelector(`.nav-item[data-tab-name="${targetTabName}"]`);
+            if (activeItem) {
+                activeItem.classList.add('text-primary-blue', 'active-tab');
+                activeItem.classList.remove('text-gray-700');
+            }
+             
+            // Set Feed tab as active in the nav when navigating to it
+            if (targetTabName === 'feed') {
+                document.querySelector('.nav-item[data-tab-name="feed"]').classList.add('text-primary-blue', 'active-tab');
+                document.querySelector('.nav-item[data-tab-name="feed"]').classList.remove('text-gray-700');
+            }
+
+
+            document.getElementById('content-container').scrollTop = 0;
+        }
+
+        // --- Event Listeners and Initial Setup ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setupAuthAndDatabase(); // Start Firebase setup immediately
+
+            const navItems = document.querySelectorAll('.nav-item');
+            const scanCard = document.getElementById('scan-card');
+            const startAppButton = document.getElementById('start-app-button');
+            const splashScreen = document.getElementById('splash-screen');
+            const sendShareProofButton = document.getElementById('send-share-proof');
+            const submitScanCodeButton = document.getElementById('submit-scan-code');
+            const closeScanModalButton = document.getElementById('close-scan-modal');
+            const customizeButtons = document.querySelectorAll('.customize-btn'); // New Selector
+
+            // 1. Splash Screen Control
+            startAppButton.addEventListener('click', () => {
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.classList.add('hidden');
+                    // Ganti 'home' menjadi 'feed' sebagai tab default setelah splash
+                    switchTab('feed'); 
+                }, 500); 
+            });
+
+            // 2. Tab Navigation
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetTabName = item.getAttribute('data-tab-name');
+                    switchTab(targetTabName);
+                });
+            });
+
+            // 3. Quick Actions
+            document.querySelectorAll('.action-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const actionName = e.currentTarget.querySelector('span:last-child').textContent;
+                    showToast(`${actionName} diakses!`);
+                });
+            });
+
+            // 4. Shop Actions
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const item = e.currentTarget.getAttribute('data-item');
+                    showToast(`${item} ditambahkan ke keranjang!`);
+                });
+            });
+
+            // 5. Customize Flavor Action (New)
+            customizeButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const flavor = e.currentTarget.getAttribute('data-flavor');
+                    showToast(`Membuka Customizer untuk: ${flavor}!`);
+                });
+            });
+
+            // 6. Scan Card Modal
+            scanCard.addEventListener('click', () => {
+                scanModal.classList.remove('hidden');
+            });
+            closeScanModalButton.addEventListener('click', () => {
+                scanModal.classList.add('hidden');
+            });
+            submitScanCodeButton.addEventListener('click', async () => {
+                const input = document.getElementById('scan-code-input');
+                const code = input.value.trim();
+                
+                if (code === '') {
+                    showToast("Kode tidak boleh kosong!", true);
+                    return;
+                }
+                
+                if (db && userId) {
+                     try {
+                        // Log scan action to Firestore
+                        await addDoc(collection(db, 'artifacts', appId, 'users', userId, 'scans'), {
+                            code: code,
+                            timestamp: serverTimestamp(),
+                            status: 'pending' 
+                        });
+                        showToast(`Kode ${code} berhasil dikirim! Poin akan segera ditambahkan.`);
+                        input.value = '';
+                        scanModal.classList.add('hidden');
+                     } catch (e) {
+                         console.error("Error adding scan document: ", e);
+                         showToast("Gagal mengirim kode ke server.", true);
+                     }
+                } else {
+                    showToast("Sistem belum siap. Coba lagi nanti.", true);
+                }
+            });
+
+            // 7. Share Proof Submission
+            if (sendShareProofButton) {
+                sendShareProofButton.addEventListener('click', () => {
+                    const input = document.getElementById('share-link-input');
+                    const status = document.getElementById('verification-status');
+                    if (input.value.trim() === '') {
+                        showToast("Link tidak boleh kosong!", true);
+                        return;
+                    }
+                    showToast("Bukti Share terkirim! Menunggu verifikasi.");
+                    status.textContent = 'Status: Bukti Terkirim (Menunggu Verifikasi)';
+                    status.classList.remove('text-amber-500', 'text-green-500');
+                    status.classList.add('text-amber-500');
+                    input.value = '';
+                });
+            }
+
+            // By default, only show splash screen
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+        });
+    </script>
+
+</body>
+</html>
